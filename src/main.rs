@@ -1,8 +1,6 @@
 use std::io;
 use std::process::Command;
 fn main() {
-    println!("\nПрограмма для получения IP-адреса и скорости подключения");
-
     // Получаем IP-адрес с помощью ident.me
     match get_ip_address() {
         Ok(ip_address) => println!("\nВаш текущий IP-адрес: {}", ip_address),
