@@ -1,17 +1,42 @@
 use std::io;
-use std::process::Command;
+use std::process::{Command};
+
 fn main() {
-    // Получаем IP-адрес с помощью ident.me
+    // Show loading popup immediately
+    let loading_popup = Command::new("zenity")
+        .arg("--info")
+        .arg("--title=Сетевая информация")
+        .arg("--text=Загрузка данных...")
+        .arg("--width=300")
+        .spawn();
+
+    let mut message = String::new();
+
+    // Get IP address
     match get_ip_address() {
-        Ok(ip_address) => println!("\nВаш текущий IP-адрес: {}", ip_address),
-        Err(e) => println!("Ошибка при получении IP-адреса: {}", e),
+        Ok(ip_address) => message.push_str(&format!("Ваш текущий IP-адрес: {}\n\n", ip_address)),
+        Err(e) => message.push_str(&format!("Ошибка при получении IP-адреса: {}\n\n", e)),
     }
 
-    // Получаем информацию о скорости подключения
+    // Get network speed
     match get_network_speed() {
-        Ok(speed) => println!("\nСкорость подключения: {} Мбит/с", speed),
-        Err(e) => println!("Ошибка при получении скорости: {}", e),
+        Ok(speed) => message.push_str(&format!("Скорость подключения: {} Мбит/с", speed)),
+        Err(e) => message.push_str(&format!("Ошибка при получении скорости: {}", e)),
     }
+
+    // Close the loading popup if it's still open
+    if let Ok(mut child) = loading_popup {
+        let _ = child.kill();
+    }
+
+    // Show results popup
+    let _ = Command::new("zenity")
+        .arg("--info")
+        .arg("--title=Сетевая информация")
+        .arg("--text")
+        .arg(&message)
+        .arg("--width=300")
+        .output();
 }
 
 fn get_ip_address() -> Result<String, io::Error> {
