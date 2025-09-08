@@ -1,12 +1,12 @@
 use std::io;
-use std::process::{Command};
+use std::process::Command;
 
 fn main() {
     // Show loading popup immediately
     let loading_popup = Command::new("zenity")
         .arg("--info")
-        .arg("--title=Сетевая информация")
-        .arg("--text=Загрузка данных...")
+        .arg("--title=Network information")
+        .arg("--text=Wait...")
         .arg("--width=300")
         .spawn();
 
@@ -14,14 +14,14 @@ fn main() {
 
     // Get IP address
     match get_ip_address() {
-        Ok(ip_address) => message.push_str(&format!("Ваш текущий IP-адрес: {}\n\n", ip_address)),
-        Err(e) => message.push_str(&format!("Ошибка при получении IP-адреса: {}\n\n", e)),
+        Ok(ip_address) => message.push_str(&format!("Your IP address: {}\n\n", ip_address)),
+        Err(e) => message.push_str(&format!("Error obtaining IP info: {}\n\n", e)),
     }
 
     // Get network speed
     match get_network_speed() {
-        Ok(speed) => message.push_str(&format!("Скорость подключения: {} Мбит/с", speed)),
-        Err(e) => message.push_str(&format!("Ошибка при получении скорости: {}", e)),
+        Ok(speed) => message.push_str(&format!("Speed: {} Mbps", speed)),
+        Err(e) => message.push_str(&format!("Error obtaining speed info: {}", e)),
     }
 
     // Close the loading popup if it's still open
@@ -32,7 +32,7 @@ fn main() {
     // Show results popup
     let _ = Command::new("zenity")
         .arg("--info")
-        .arg("--title=Сетевая информация")
+        .arg("--title=Network")
         .arg("--text")
         .arg(&message)
         .arg("--width=300")
